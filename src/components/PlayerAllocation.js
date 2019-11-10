@@ -1,17 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export default function PlayerAllocation(props) {
-  console.log(props.playerCount);
+  console.log(props.playerAllocation);
+  const [activeTabData, setActiveTabData] = useState([]);
+  const [activeTab, setActiveTab] = useState("QB");
+
   let dataToProcess =
-    typeof props.playerCount.QB === "undefined" ? false : true;
-  let player_rows = [];
-  if (dataToProcess) {
-    Object.keys(props.playerCount).forEach(posKey => {
-      Object.keys(props.playerCount[posKey]).forEach(playerKey => {
-        let player = props.playerCount[posKey][playerKey];
-        player_rows.push(
-          <tr>
-            <td>{posKey}</td>
+    typeof props.playerAllocation.QB === "undefined" ? false : true;
+
+  const ACTIVE_COLOR = "#b3aead";
+
+  const clickedPosTab = position => {
+    console.log(`Clicked ${position}`);
+    let playerRows = [];
+    if (dataToProcess) {
+      Object.keys(props.playerAllocation[position]).forEach(playerKey => {
+        let player = props.playerAllocation[position][playerKey];
+        playerRows.push(
+          <tr key={playerKey}>
+            <td>{position}</td>
             <td>{playerKey}</td>
             <td>{player.team}</td>
             <td>{player.dk_salary}</td>
@@ -21,12 +28,79 @@ export default function PlayerAllocation(props) {
           </tr>
         );
       });
-    });
-  }
+    }
+    setActiveTabData(playerRows);
+    setActiveTab(position);
+  };
+
+  useEffect(() => clickedPosTab("QB"), [props.playerAllocation]);
+
   return (
     <div className="pt-2">
       {dataToProcess ? (
         <div>
+          <ul className="nav nav-tabs">
+            <li role="presentation" className="nav-item pr-1">
+              <button
+                className="nav-link"
+                style={{
+                  backgroundColor: activeTab === "QB" ? ACTIVE_COLOR : null,
+                  outline: "none"
+                }}
+                onClick={e => clickedPosTab("QB")}
+              >
+                QB
+              </button>
+            </li>
+            <li role="presentation" className="nav-item pr-1">
+              <button
+                className="nav-link"
+                style={{
+                  backgroundColor: activeTab === "RB" ? ACTIVE_COLOR : null,
+                  outline: "none"
+                }}
+                onClick={e => clickedPosTab("RB")}
+              >
+                RB
+              </button>
+            </li>
+            <li role="presentation" className="nav-item pr-1">
+              <button
+                className="nav-link"
+                style={{
+                  backgroundColor: activeTab === "WR" ? ACTIVE_COLOR : null,
+                  outline: "none"
+                }}
+                onClick={e => clickedPosTab("WR")}
+              >
+                WR
+              </button>
+            </li>
+            <li role="presentation" className="nav-item pr-1">
+              <button
+                className="nav-link"
+                style={{
+                  backgroundColor: activeTab === "TE" ? ACTIVE_COLOR : null,
+                  outline: "none"
+                }}
+                onClick={e => clickedPosTab("TE")}
+              >
+                TE
+              </button>
+            </li>
+            <li role="presentation" className="nav-item pr-1">
+              <button
+                className="nav-link"
+                style={{
+                  backgroundColor: activeTab === "DST" ? ACTIVE_COLOR : null,
+                  outline: "none"
+                }}
+                onClick={e => clickedPosTab("DST")}
+              >
+                DST
+              </button>
+            </li>
+          </ul>
           <table className="table table-bordered table-striped">
             <thead>
               <tr>
@@ -39,7 +113,7 @@ export default function PlayerAllocation(props) {
                 <th>League Ownership</th>
               </tr>
             </thead>
-            <tbody>{player_rows}</tbody>
+            <tbody>{activeTabData}</tbody>
           </table>
         </div>
       ) : (

@@ -110,7 +110,7 @@ function App() {
       </div>
       <div className="row">
         <div className="col">
-          <PlayerAllocation playerCount={getNFLPlayerData(playerData)} />
+          <PlayerAllocation playerAllocation={getNFLPlayerData(playerData)} />
         </div>
         <div className="col"></div>
         <div className="col"></div>
