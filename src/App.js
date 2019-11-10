@@ -5,9 +5,9 @@ import PlayerAllocation from "./components/PlayerAllocation";
 
 function App() {
   const [playerData, setPlayerData] = useState({});
-  const [player, setPlayer] = useState("");
-  const [year, setYear] = useState("");
-  const [week, setWeek] = useState("");
+  const [player, setPlayer] = useState("papagates");
+  const [year, setYear] = useState("2019");
+  const [week, setWeek] = useState("8");
   const [searchQuery, setSearchQuery] = useState("");
   const [search, setSearch] = useState(false);
 
@@ -18,7 +18,7 @@ function App() {
     }
   };
 
-  const getNFLPlayerCount = data => {
+  const getNFLPlayerData = data => {
     let playerCount = {};
     if (typeof data.lineups !== "undefined") {
       data.lineups.forEach(lineup => {
@@ -26,13 +26,27 @@ function App() {
           lineup.players.forEach(player => {
             if (player.position in playerCount) {
               if (player.name in playerCount[player.position]) {
-                playerCount[player.position][player.name] += 1;
+                playerCount[player.position][player.name]["count"] += 1;
               } else {
-                playerCount[player.position][player.name] = 1;
+                playerCount[player.position][player.name] = {
+                  count: 1,
+                  team: player.team,
+                  dk_points: player.dk_points,
+                  dk_salary: player.dk_salary,
+                  ownership_pct: player.ownership_pct,
+                  user_entries: data.entries
+                };
               }
             } else {
               let positionObject = {};
-              positionObject[player.name] = 1;
+              positionObject[player.name] = {
+                count: 1,
+                team: player.team,
+                dk_points: player.dk_points,
+                dk_salary: player.dk_salary,
+                ownership_pct: player.ownership_pct,
+                user_entries: data.entries
+              };
               playerCount[player.position] = positionObject;
             }
           });
@@ -51,7 +65,10 @@ function App() {
         console.log(responseData.data);
         setSearch(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        setSearch(false);
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -92,8 +109,10 @@ function App() {
         <div className="col"></div>
       </div>
       <div className="row">
+        <div className="col">
+          <PlayerAllocation playerCount={getNFLPlayerData(playerData)} />
+        </div>
         <div className="col"></div>
-        <PlayerAllocation playerCount={getNFLPlayerCount(playerData)} />
         <div className="col"></div>
       </div>
     </div>
