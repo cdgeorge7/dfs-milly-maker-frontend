@@ -4,6 +4,12 @@ export default function PlayerAllocation(props) {
   console.log(props.playerAllocation);
   const [activeTabData, setActiveTabData] = useState([]);
   const [activeTab, setActiveTab] = useState("QB");
+  const [sortDirection, setSortDirection] = useState({
+    dk_salary: true,
+    dk_points: true,
+    usage: true,
+    ownership_pct: true
+  });
 
   let dataToProcess =
     typeof props.playerAllocation.QB === "undefined" ? false : true;
@@ -16,21 +22,58 @@ export default function PlayerAllocation(props) {
     if (dataToProcess) {
       Object.keys(props.playerAllocation[position]).forEach(playerKey => {
         let player = props.playerAllocation[position][playerKey];
-        playerRows.push(
-          <tr key={playerKey}>
-            <td>{position}</td>
-            <td>{playerKey}</td>
-            <td>{player.team}</td>
-            <td>{player.dk_salary}</td>
-            <td>{player.dk_points}</td>
-            <td>{((player.count / player.user_entries) * 100).toFixed(2)}</td>
-            <td>{player.ownership_pct}</td>
-          </tr>
-        );
+        playerRows.push({
+          key: playerKey,
+          position: position,
+          playerKey: playerKey,
+          team: player.team,
+          dk_salary: player.dk_salary,
+          dk_points: player.dk_points,
+          usage: ((player.count / player.user_entries) * 100).toFixed(2),
+          ownership_pct: player.ownership_pct
+        });
       });
     }
     setActiveTabData(playerRows);
     setActiveTab(position);
+  };
+
+  const sortColumn = colName => {
+    let data = [...activeTabData];
+    if (sortDirection[colName]) {
+      console.log(sortDirection[colName]);
+      data.sort((a, b) => {
+        if (isNaN(parseFloat(a[colName]))) {
+          return a[colName] < b[colName] ? 1 : -1;
+        } else {
+          return parseFloat(a[colName]) < parseFloat(b[colName]) ? 1 : -1;
+        }
+      });
+      let newDirection = !sortDirection[colName];
+      let newSortDirectionObj = { ...sortDirection };
+      Object.keys(newSortDirectionObj).forEach(
+        key => (newSortDirectionObj[key] = true)
+      );
+      newSortDirectionObj[colName] = newDirection;
+      setSortDirection(newSortDirectionObj);
+    } else {
+      data.sort((a, b) => {
+        if (isNaN(parseFloat(a[colName]))) {
+          return a[colName] < b[colName] ? -1 : 1;
+        } else {
+          return parseFloat(a[colName]) < parseFloat(b[colName]) ? -1 : 1;
+        }
+      });
+      let newDirection = !sortDirection[colName];
+      let newSortDirectionObj = { ...sortDirection };
+      Object.keys(newSortDirectionObj).forEach(
+        key => (newSortDirectionObj[key] = true)
+      );
+      newSortDirectionObj[colName] = newDirection;
+      setSortDirection(newSortDirectionObj);
+    }
+    console.log(data);
+    setActiveTabData(data);
   };
 
   useEffect(() => clickedPosTab("QB"), [props.playerAllocation]);
@@ -107,13 +150,52 @@ export default function PlayerAllocation(props) {
                 <th>Position</th>
                 <th>Player</th>
                 <th>Team</th>
-                <th>Salary</th>
-                <th>Points</th>
-                <th>User Ownership</th>
-                <th>League Ownership</th>
+                <th
+                  onClick={e => {
+                    sortColumn("dk_salary");
+                  }}
+                >
+                  Salary
+                </th>
+                <th
+                  onClick={e => {
+                    sortColumn("dk_points");
+                  }}
+                >
+                  Points
+                </th>
+                <th
+                  onClick={e => {
+                    sortColumn("usage");
+                  }}
+                >
+                  User Ownership
+                </th>
+                <th
+                  onClick={e => {
+                    sortColumn("ownership_pct");
+                  }}
+                >
+                  League Ownership
+                </th>
               </tr>
             </thead>
-            <tbody>{activeTabData}</tbody>
+            <tbody>
+              {activeTabData.map(row => {
+                console.log("rendering");
+                return (
+                  <tr key={row.playerKey}>
+                    <td>{row.position}</td>
+                    <td>{row.playerKey}</td>
+                    <td>{row.team}</td>
+                    <td>{row.dk_salary}</td>
+                    <td>{row.dk_points}</td>
+                    <td>{row.usage}</td>
+                    <td>{row.ownership_pct}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
           </table>
         </div>
       ) : (
