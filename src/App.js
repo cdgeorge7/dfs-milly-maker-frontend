@@ -7,7 +7,7 @@ function App() {
   const [playerData, setPlayerData] = useState({});
   const [player, setPlayer] = useState("papagates");
   const [year, setYear] = useState("2019");
-  const [week, setWeek] = useState("8");
+  const [week, setWeek] = useState("10");
   const [searchQuery, setSearchQuery] = useState("");
   const [search, setSearch] = useState(false);
 
@@ -110,7 +110,10 @@ function App() {
       </div>
       <div className="row">
         <div className="col">
-          <PlayerAllocation playerAllocation={getNFLPlayerData(playerData)} />
+          <PlayerAllocation
+            playerAllocation={getNFLPlayerData(playerData)}
+            search={search}
+          />
         </div>
         <div className="col"></div>
         <div className="col"></div>

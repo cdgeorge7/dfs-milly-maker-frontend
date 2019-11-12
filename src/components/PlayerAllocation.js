@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 export default function PlayerAllocation(props) {
-  console.log(props.playerAllocation);
+  //console.log(props.playerAllocation);
   const [activeTabData, setActiveTabData] = useState([]);
   const [activeTab, setActiveTab] = useState("QB");
+  const [initTab, setInitTab] = useState(true);
   const [sortDirection, setSortDirection] = useState({
     dk_salary: true,
     dk_points: true,
@@ -17,7 +18,7 @@ export default function PlayerAllocation(props) {
   const ACTIVE_COLOR = "#b3aead";
 
   const clickedPosTab = position => {
-    console.log(`Clicked ${position}`);
+    //console.log(`Clicked ${position}`);
     let playerRows = [];
     if (dataToProcess) {
       Object.keys(props.playerAllocation[position]).forEach(playerKey => {
@@ -76,7 +77,9 @@ export default function PlayerAllocation(props) {
     setActiveTabData(data);
   };
 
-  useEffect(() => clickedPosTab("QB"), [props.playerAllocation]);
+  useEffect(() => {
+    clickedPosTab("QB");
+  }, [props.search]);
 
   return (
     <div className="pt-2">
@@ -182,7 +185,6 @@ export default function PlayerAllocation(props) {
             </thead>
             <tbody>
               {activeTabData.map(row => {
-                console.log("rendering");
                 return (
                   <tr key={row.playerKey}>
                     <td>{row.position}</td>
