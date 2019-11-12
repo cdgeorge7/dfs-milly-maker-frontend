@@ -80,31 +80,34 @@ function App() {
 
   return (
     <div className="container-fluid">
-      <div className="row mt-5 justify-content-md-center">
+      <div className="row mt-4 justify-content-md-center">
         <div className="col"></div>
         <div className="col-8-md-auto bg-dar">
           <input
             type="text"
-            placeholder="Player"
-            className="mr-2 mb-2"
-            onChange={e => setPlayer(e.target.value)}
-          />
-          <input
-            type="text"
             placeholder="Year"
-            className="mr-2 mb-2 w-25"
+            className="mr-2 mb-2 date-input"
             onChange={e => setYear(e.target.value)}
           />
           <input
             type="text"
             placeholder="Week"
-            className="mr-2 mb-2 w-25"
+            className="mr-2 mb-2 date-input"
             onChange={e => setWeek(e.target.value)}
           />
-          <br />
-          <button className="btn btn-secondary" onClick={handleSearchClick}>
+          <button
+            className="btn btn-secondary mb-2"
+            onClick={handleSearchClick}
+          >
             Search
           </button>
+          <br />
+          <input
+            type="text"
+            placeholder="Player"
+            className="mr-2 mb-2 player-input"
+            onChange={e => setPlayer(e.target.value)}
+          />
         </div>
         <div className="col"></div>
       </div>
@@ -115,7 +118,6 @@ function App() {
             search={search}
           />
         </div>
-        <div className="col"></div>
         <div className="col"></div>
       </div>
     </div>

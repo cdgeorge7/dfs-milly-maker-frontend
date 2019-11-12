@@ -4,7 +4,6 @@ export default function PlayerAllocation(props) {
   //console.log(props.playerAllocation);
   const [activeTabData, setActiveTabData] = useState([]);
   const [activeTab, setActiveTab] = useState("QB");
-  const [initTab, setInitTab] = useState(true);
   const [sortDirection, setSortDirection] = useState({
     dk_salary: true,
     dk_points: true,
@@ -37,12 +36,17 @@ export default function PlayerAllocation(props) {
     }
     setActiveTabData(playerRows);
     setActiveTab(position);
+    setSortDirection({
+      dk_salary: true,
+      dk_points: true,
+      usage: true,
+      ownership_pct: true
+    });
   };
 
   const sortColumn = colName => {
     let data = [...activeTabData];
     if (sortDirection[colName]) {
-      console.log(sortDirection[colName]);
       data.sort((a, b) => {
         if (isNaN(parseFloat(a[colName]))) {
           return a[colName] < b[colName] ? 1 : -1;

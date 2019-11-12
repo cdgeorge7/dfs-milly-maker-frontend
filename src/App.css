@@ -5,3 +5,11 @@
 .nav-link.active {
   background-color: red;
 }
+
+.date-input {
+  width: 50px;
+}
+
+.player-input {
+  width: 240px;
+}
