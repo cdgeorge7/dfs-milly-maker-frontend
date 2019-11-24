@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
 import PlayerAllocation from "./components/PlayerAllocation";
+import SearchDropdown from "./components/SearchDropdown";
+import ProfitStats from "./components/ProfitStats";
 
 function App() {
   const [playerData, setPlayerData] = useState({});
-  const [player, setPlayer] = useState("papagates");
+  const [player, setPlayer] = useState("golions85");
   const [year, setYear] = useState("2019");
-  const [week, setWeek] = useState("10");
+  const [week, setWeek] = useState("11");
   const [searchQuery, setSearchQuery] = useState("");
   const [search, setSearch] = useState(false);
+  const [typingInSearch, setTypingInSearch] = useState(false);
 
   const handleSearchClick = () => {
     if (player !== "" && year !== "" && week !== "") {
@@ -58,11 +61,16 @@ function App() {
     }
   };
 
-  const fetchData = async () => {
+  const getMetaStats = data => {
+    let metaStats = { ...data };
+    delete metaStats.lineups;
+    return metaStats;
+  };
+
+  const fetchUsernameData = async () => {
     await axios(`http://localhost:5000/username/${searchQuery}`)
       .then(responseData => {
         setPlayerData(responseData.data);
-        console.log(responseData.data);
         setSearch(false);
       })
       .catch(err => {
@@ -74,7 +82,7 @@ function App() {
   useEffect(() => {
     if (search) {
       //console.log(`http://localhost:5000/username/${searchQuery}`);
-      fetchData();
+      fetchUsernameData();
     }
   }, [search]);
 
@@ -98,6 +106,7 @@ function App() {
           <button
             className="btn btn-secondary mb-2"
             onClick={handleSearchClick}
+            style={{ outline: "none" }}
           >
             Search
           </button>
@@ -107,6 +116,12 @@ function App() {
             placeholder="Player"
             className="mr-2 mb-2 player-input"
             onChange={e => setPlayer(e.target.value)}
+            onKeyDown={e => setTypingInSearch(true)}
+          />
+          <br />
+          <SearchDropdown
+            typingInSearch={typingInSearch}
+            setTypingInSearch={setTypingInSearch}
           />
         </div>
         <div className="col"></div>
@@ -118,7 +133,9 @@ function App() {
             search={search}
           />
         </div>
-        <div className="col"></div>
+        <div className="col">
+          <ProfitStats metaStats={getMetaStats(playerData)} />
+        </div>
       </div>
     </div>
   );
